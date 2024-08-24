@@ -1,16 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './BookCatalog.css'; // Ensure your CSS file is linked for styling
+import './BookCatalog.css';
 
 function BookCatalog() {
     const [books, setBooks] = useState([]);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filterByGenre, setFilterByGenre] = useState('');
+    const [newBook, setNewBook] = useState({
+        title: '',
+        author: '',
+        isbn: '',
+        genre: '',
+        publication_year: '',
+        availability_status: 'Available',
+        shelf_location: '',
+    });
+    const [editingBook, setEditingBook] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        // Fetch the list of books from the backend
+        fetchBooks();
+    }, []);
+
+    const fetchBooks = () => {
         axios.get('http://localhost:5000/books')
             .then(response => {
                 setBooks(response.data);
@@ -21,26 +32,63 @@ function BookCatalog() {
                 setError('Error fetching books');
                 setLoading(false);
             });
-    }, []);
-
-    const handleSearchChange = (e) => {
-        setSearchTerm(e.target.value);
     };
 
-    const handleFilterChange = (e) => {
-        setFilterByGenre(e.target.value);
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        if (editingBook) {
+            setEditingBook({ ...editingBook, [name]: value });
+        } else {
+            setNewBook({ ...newBook, [name]: value });
+        }
     };
 
-    // Filter and search books based on the search term and selected genre
-    const filteredBooks = books.filter(book => {
-        return (
-            (book.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-            book.author.toLowerCase().includes(searchTerm.toLowerCase()) || 
-            book.isbn.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            book.genre.toLowerCase().includes(searchTerm.toLowerCase())) &&
-            (filterByGenre === '' || book.genre === filterByGenre)
-        );
-    });
+    const handleAddBook = () => {
+        axios.post('http://localhost:5000/books', newBook)
+            .then(() => {
+                fetchBooks();
+                setNewBook({
+                    title: '',
+                    author: '',
+                    isbn: '',
+                    genre: '',
+                    publication_year: '',
+                    availability_status: 'Available',
+                    shelf_location: '',
+                });
+            })
+            .catch(error => {
+                console.error('Error adding book:', error);
+                setError('Error adding book');
+            });
+    };
+
+    const handleEditBook = (book) => {
+        setEditingBook(book);
+    };
+
+    const handleUpdateBook = () => {
+        axios.put(`http://localhost:5000/books/${editingBook.book_id}`, editingBook)
+            .then(() => {
+                fetchBooks();
+                setEditingBook(null);
+            })
+            .catch(error => {
+                console.error('Error updating book:', error);
+                setError('Error updating book');
+            });
+    };
+
+    const handleDeleteBook = (bookId) => {
+        axios.delete(`http://localhost:5000/books/${bookId}`)
+            .then(() => {
+                fetchBooks();
+            })
+            .catch(error => {
+                console.error('Error deleting book:', error);
+                setError('Error deleting book');
+            });
+    };
 
     if (loading) {
         return <div>Loading...</div>;
@@ -50,25 +98,41 @@ function BookCatalog() {
         return <div>{error}</div>;
     }
 
+    const generateYearOptions = () => {
+        const currentYear = new Date().getFullYear();
+        const years = [];
+        for (let year = currentYear; year >= 1800; year--) {
+            years.push(year);
+        }
+        return years;
+    };
+
     return (
         <div className="book-catalog">
             <h1>Book Catalog</h1>
 
-            {/* Search and Filter Options */}
-            <div className="search-filter">
-                <input 
-                    type="text" 
-                    placeholder="Search by title, author, ISBN, or genre" 
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                />
-                <select value={filterByGenre} onChange={handleFilterChange}>
-                    <option value="">Filter by Genre</option>
-                    {/* Dynamically generate genre options */}
-                    {[...new Set(books.map(book => book.genre))].map((genre, index) => (
-                        <option key={index} value={genre}>{genre}</option>
+            {/* Form to Add or Edit a Book */}
+            <div className="book-form">
+                <h2>{editingBook ? 'Edit Book' : 'Add a New Book'}</h2>
+                <input type="text" name="title" placeholder="Title" value={editingBook ? editingBook.title : newBook.title} onChange={handleInputChange} />
+                <input type="text" name="author" placeholder="Author" value={editingBook ? editingBook.author : newBook.author} onChange={handleInputChange} />
+                <input type="text" name="isbn" placeholder="ISBN" value={editingBook ? editingBook.isbn : newBook.isbn} onChange={handleInputChange} />
+                <input type="text" name="genre" placeholder="Genre" value={editingBook ? editingBook.genre : newBook.genre} onChange={handleInputChange} />
+                <select name="publication_year" value={editingBook ? editingBook.publication_year : newBook.publication_year} onChange={handleInputChange}>
+                    <option value="">Select Year</option>
+                    {generateYearOptions().map((year) => (
+                        <option key={year} value={year}>{year}</option>
                     ))}
                 </select>
+                <input type="text" name="shelf_location" placeholder="Shelf Location" value={editingBook ? editingBook.shelf_location : newBook.shelf_location} onChange={handleInputChange} />
+                {editingBook ? (
+                    <>
+                        <button onClick={handleUpdateBook}>Update Book</button>
+                        <button onClick={() => setEditingBook(null)}>Cancel</button>
+                    </>
+                ) : (
+                    <button onClick={handleAddBook}>Add Book</button>
+                )}
             </div>
 
             {/* Book List Display */}
@@ -84,10 +148,11 @@ function BookCatalog() {
                             <th>Year</th>
                             <th>Availability</th>
                             <th>Shelf Location</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredBooks.map((book) => (
+                        {books.map((book) => (
                             <tr key={book.book_id}>
                                 <td>{book.title}</td>
                                 <td>{book.author}</td>
@@ -96,6 +161,10 @@ function BookCatalog() {
                                 <td>{book.publication_year}</td>
                                 <td>{book.availability_status}</td>
                                 <td>{book.shelf_location}</td>
+                                <td>
+                                    <button onClick={() => handleEditBook(book)}>Edit</button>
+                                    <button onClick={() => handleDeleteBook(book.book_id)}>Delete</button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
