@@ -1,4 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Header from './components/Header';
+import BookCatalog from './components/BookCatalog';
+import UserManagement from './components/UserManagement';
+import CirculationManagement from './components/CirculationManagement';
+import Notifications from './components/Notifications';
+import Search from './components/Search';
 
 function App() {
     const [message, setMessage] = useState('');
@@ -11,11 +18,23 @@ function App() {
     }, []);
 
     return (
-        <div className="App">
-            <header className="App-header">
-                <p>{message}</p>
-            </header>
-        </div>
+        <Router>
+            <Header />
+            <div className="App">
+                <header className="App-header">
+                    {/* Display the message fetched from the backend */}
+                    <p>{message}</p>
+                </header>
+                {/* Define Routes for your components */}
+                <Routes>
+                    <Route path="/" element={<BookCatalog />} />
+                    <Route path="/users" element={<UserManagement />} />
+                    <Route path="/circulation" element={<CirculationManagement />} />
+                    <Route path="/notifications" element={<Notifications />} />
+                    <Route path="/search" element={<Search />} />
+                </Routes>
+            </div>
+        </Router>
     );
 }
 
