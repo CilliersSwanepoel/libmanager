@@ -1,0 +1,84 @@
+/* BookCatalog.css */
+
+.book-catalog {
+    padding: 20px;
+}
+
+.search-filter {
+    margin-bottom: 20px;
+}
+
+.search-filter input, .search-filter select {
+    padding: 8px;
+    margin-right: 10px;
+}
+
+.add-book-form {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+}
+
+.add-book-form h2 {
+    margin-bottom: 10px;
+}
+
+.add-book-form input {
+    margin: 5px;
+    padding: 8px;
+    width: calc(100% - 20px);
+    display: block;
+}
+
+.add-book-form button {
+    padding: 10px 15px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.add-book-form button:hover {
+    background-color: #218838;
+}
+
+.book-list {
+    margin-top: 20px;
+}
+
+.book-list table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.book-list th, .book-list td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.book-list th {
+    background-color: #f2f2f2;
+}
+
+.book-list button {
+    margin-right: 5px;
+    padding: 5px 10px;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+.book-list button:hover {
+    opacity: 0.8;
+}
+
+.book-list button:nth-child(1) {
+    background-color: #007bff;
+}
+
+.book-list button:nth-child(2) {
+    background-color: #dc3545;
+}
