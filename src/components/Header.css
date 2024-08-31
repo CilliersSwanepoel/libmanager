@@ -1,6 +1,9 @@
 /* Header.css */
 
 .navbar {
+    position: sticky;
+    top: 0;
+    width: 100%;
     background-color: #ff7300;
     padding: 1rem;
 }
@@ -24,5 +27,5 @@
 }
 
 .nav-item a:hover {
-    color: #ffcc6c;
+    color: #ffe6b7;
 }

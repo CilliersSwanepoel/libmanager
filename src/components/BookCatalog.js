@@ -16,6 +16,7 @@ function BookCatalog() {
     const [editingBook, setEditingBook] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         fetchBooks();
@@ -41,6 +42,10 @@ function BookCatalog() {
         } else {
             setNewBook({ ...newBook, [name]: value });
         }
+    };
+
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value); // Update search term state
     };
 
     const handleAddBook = () => {
@@ -107,9 +112,28 @@ function BookCatalog() {
         return years;
     };
 
+    
+    const filteredBooks = books.filter(book => 
+        book.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        book.author.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        book.isbn.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        book.genre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        book.publication_year.toString().includes(searchTerm)
+    );
+
     return (
+        
         <div className="book-catalog">
             <h1>Book Catalog</h1>
+
+            {/* Search Bar */}
+            <input
+                type="text"
+                placeholder="Search by title, author, ISBN, genre, or year"
+                value={searchTerm}
+                onChange={handleSearchChange}
+                className="search-bar"
+            />
 
             {/* Form to Add or Edit a Book */}
             <div className="book-form">
@@ -152,7 +176,7 @@ function BookCatalog() {
                         </tr>
                     </thead>
                     <tbody>
-                        {books.map((book) => (
+                        {filteredBooks.map((book) => (
                             <tr key={book.book_id}>
                                 <td>{book.title}</td>
                                 <td>{book.author}</td>

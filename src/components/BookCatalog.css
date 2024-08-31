@@ -76,10 +76,26 @@
 }
 
 .book-list button:nth-child(1) {
-    background-color: #007bff;
+    background-color: #ff7300;
+    border-radius: 15px;
 }
 
 .book-list button:nth-child(2) {
     background-color: #dc3545;
+    border-radius: 15px;
 }
 
+.search-bar {
+    width: 50%;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: border-color 0.3s ease;
+}
+
+.search-bar:focus {
+    border-color: #ff7300;
+    outline: none;
+}
