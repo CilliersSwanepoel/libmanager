@@ -1,19 +1,20 @@
-const { Pool } = require('pg');
+const { Client } = require('pg');
 
-const pool = new Pool({
-    user: 'postgres',       // Replace with your PostgreSQL username
-    host: 'libmanager.czo8aeqgqkfw.eu-north-1.rds.amazonaws.com',           // Hostname of your PostgreSQL server
-    database: 'libmanager',  // Your database name
-    password: 'Quxub7164*02',   // Replace with your PostgreSQL password
-    port: 5432,                  // Default PostgreSQL port
+// Create a new PostgreSQL client instance
+const client = new Client({
+    user: 'postgres',       // Your PostgreSQL username
+    host: 'libmanager.czo8aeqgqkfw.eu-north-1.rds.amazonaws.com', // Your AWS RDS endpoint
+    database: 'libmanager', // Your database name
+    password: 'Quxub7164*02',   // Your PostgreSQL password
+    port: 5432,             // Default PostgreSQL port
+    ssl: {
+        rejectUnauthorized: false, // Disable SSL certificate validation for development
+    },
 });
 
-pool.connect((err, client, release) => {
-    if (err) {
-        return console.error('Error acquiring client', err.stack);
-    }
-    console.log('Connected to PostgreSQL database');
-    release();
-});
+// Connect to the PostgreSQL database
+client.connect()
+    .then(() => console.log('Connected to AWS PostgreSQL database successfully'))
+    .catch(err => console.error('Connection error', err.stack));
 
-module.exports = pool;
+module.exports = client;
