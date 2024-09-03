@@ -96,7 +96,7 @@ function BookCatalog() {
     };
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <div>Loading Content...Hang in there, Bookworm</div>;
     }
 
     if (error) {
@@ -122,7 +122,7 @@ function BookCatalog() {
     );
 
     return (
-        
+
         <div className="book-catalog">
             <h1>Book Catalog</h1>
 
