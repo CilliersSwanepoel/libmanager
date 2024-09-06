@@ -11,7 +11,6 @@ function Header() {
                 <li className="nav-item"><Link to="/users">User Management</Link></li>
                 <li className="nav-item"><Link to="/circulation">Circulation Management</Link></li>
                 <li className="nav-item"><Link to="/notifications">Notifications</Link></li>
-                <li className="nav-item"><Link to="/search">Search</Link></li>
             </ul>
         </nav>
     );

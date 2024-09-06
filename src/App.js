@@ -5,7 +5,6 @@ import BookCatalog from './components/BookCatalog';
 import UserManagement from './components/UserManagement';
 import CirculationManagement from './components/CirculationManagement';
 import Notifications from './components/Notifications';
-import Search from './components/Search';
 
 function App() {
     const [message, setMessage] = useState('');
@@ -31,7 +30,6 @@ function App() {
                     <Route path="/users" element={<UserManagement />} />
                     <Route path="/circulation" element={<CirculationManagement />} />
                     <Route path="/notifications" element={<Notifications />} />
-                    <Route path="/search" element={<Search />} />
                 </Routes>
             </div>
         </Router>
