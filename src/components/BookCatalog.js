@@ -137,13 +137,13 @@ function BookCatalog() {
 
             {/* Form to Add or Edit a Book */}
             <div className="book-form">
-                <h2>{editingBook ? 'Edit Book' : 'Add a New Book'}</h2>
+                <h2>{editingBook ? 'Edit Book' : 'Add Book'}</h2>
                 <input type="text" name="title" placeholder="Title" value={editingBook ? editingBook.title : newBook.title} onChange={handleInputChange} />
                 <input type="text" name="author" placeholder="Author" value={editingBook ? editingBook.author : newBook.author} onChange={handleInputChange} />
                 <input type="text" name="isbn" placeholder="ISBN" value={editingBook ? editingBook.isbn : newBook.isbn} onChange={handleInputChange} />
                 <input type="text" name="genre" placeholder="Genre" value={editingBook ? editingBook.genre : newBook.genre} onChange={handleInputChange} />
                 <select name="publication_year" value={editingBook ? editingBook.publication_year : newBook.publication_year} onChange={handleInputChange}>
-                    <option value="">Select Year</option>
+                    <option value="">Year</option>
                     {generateYearOptions().map((year) => (
                         <option key={year} value={year}>{year}</option>
                     ))}
