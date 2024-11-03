@@ -1,6 +1,6 @@
-/* BookCatalog.css */
+/* UserManagement.css */
 
-.book-catalog {
+.user-management {
     padding: 20px;
 }
 
@@ -13,25 +13,25 @@
     margin-right: 10px;
 }
 
-.add-book-form {
+.add-user-form {
     margin-bottom: 20px;
     padding: 10px;
     border: 1px solid #ddd;
     background-color: #f9f9f9;
 }
 
-.add-book-form h2 {
+.add-user-form h2 {
     margin-bottom: 10px;
 }
 
-.add-book-form input {
+.add-user-form input {
     margin: 5px;
     padding: 8px;
     width: calc(100% - 20px);
     display: block;
 }
 
-.add-book-form button {
+.add-user-form button {
     padding: 10px 15px;
     background-color: #28a745;
     color: white;
@@ -40,30 +40,30 @@
     margin-top: 10px;
 }
 
-.add-book-form button:hover {
+.add-user-form button:hover {
     background-color: #218838;
 }
 
-.book-list {
+.user-list {
     margin-top: 20px;
 }
 
-.book-list table {
+.user-list table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.book-list th, .book-list td {
+.user-list th, .user-list td {
     padding: 10px;
     border: 1px solid #000000;
     text-align: left;
 }
 
-.book-list th {
+.user-list th {
     background-color: #ff7300;
 }
 
-.book-list button {
+.user-list button {
     margin-right: 5px;
     padding: 5px 10px;
     border: none;
@@ -71,16 +71,16 @@
     cursor: pointer;
 }
 
-.book-list button:hover {
+.user-list button:hover {
     opacity: 0.8;
 }
 
-.book-list button:nth-child(1) {
+.user-list button:nth-child(1) {
     background-color: #ff7300;
     border-radius: 15px;
 }
 
-.book-list button:nth-child(2) {
+.user-list button:nth-child(2) {
     background-color: #dc3545;
     border-radius: 15px;
 }

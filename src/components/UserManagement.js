@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import './UserManagement.css';
 
 function UserManagement() {
     const [users, setUsers] = useState([]);
@@ -96,11 +97,10 @@ function UserManagement() {
     }
 
     return (
-        <div>
-            <h1>User Management</h1>
+        <div className="user-management">
 
             {/* Form to Add or Edit a User */}
-            <div>
+            <div className="add-user-form">
                 <h2>{editingUser ? 'Edit User' : 'Add User'}</h2>
                 <input type="text" name="first_name" placeholder="First Name" value={editingUser ? editingUser.first_name : newUser.first_name} onChange={handleInputChange} />
                 <input type="text" name="last_name" placeholder="Last Name" value={editingUser ? editingUser.last_name : newUser.last_name} onChange={handleInputChange} />
@@ -110,6 +110,7 @@ function UserManagement() {
                 <select name="account_status" value={editingUser ? editingUser.account_status : newUser.account_status} onChange={handleInputChange}>
                     <option value="Active">Active</option>
                     <option value="Inactive">Inactive</option>
+                    <option value="Suspended">Suspended</option>
                 </select>
                 {editingUser ? (
                     <>
@@ -122,7 +123,7 @@ function UserManagement() {
             </div>
 
             {/* User List Display */}
-            <div>
+            <div className="user-list">
                 <h2>Users List</h2>
                 <table>
                     <thead>

@@ -124,7 +124,6 @@ function BookCatalog() {
     return (
 
         <div className="book-catalog">
-            <h1>Book Catalog</h1>
 
             {/* Search Bar */}
             <input
@@ -136,7 +135,7 @@ function BookCatalog() {
             />
 
             {/* Form to Add or Edit a Book */}
-            <div className="book-form">
+            <div className="add-book-form">
                 <h2>{editingBook ? 'Edit Book' : 'Add Book'}</h2>
                 <input type="text" name="title" placeholder="Title" value={editingBook ? editingBook.title : newBook.title} onChange={handleInputChange} />
                 <input type="text" name="author" placeholder="Author" value={editingBook ? editingBook.author : newBook.author} onChange={handleInputChange} />
