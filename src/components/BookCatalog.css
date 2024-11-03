@@ -38,6 +38,7 @@
     border: none;
     cursor: pointer;
     margin-top: 10px;
+    border-radius: 16px;
 }
 
 .add-book-form button:hover {
