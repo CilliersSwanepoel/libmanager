@@ -52,16 +52,27 @@
 .book-list table {
     width: 100%;
     border-collapse: collapse;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Added box-shadow */
 }
 
 .book-list th, .book-list td {
     padding: 10px;
     border: 1px solid #000000;
     text-align: left;
+    transition: background-color 0.3s ease; /* Added transition */
 }
 
 .book-list th {
     background-color: #ff7300;
+    color: white; /* Added color */
+}
+
+.book-list tr:nth-child(even) {
+    background-color: #f2f2f2; /* Added even row background color */
+}
+
+.book-list tr:hover {
+    background-color: #ddd; /* Added hover effect */
 }
 
 .book-list button {
@@ -70,10 +81,12 @@
     border: none;
     color: white;
     cursor: pointer;
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Added transition */
 }
 
 .book-list button:hover {
     opacity: 0.8;
+    transform: scale(1.05); /* Added hover effect */
 }
 
 .book-list button:nth-child(1) {
