@@ -6,9 +6,7 @@ const client = new Client({
     database: 'libmanager', 
     password: 'Quxub7164*02',  
     port: 5432,            
-    ssl: {
-        rejectUnauthorized: false,
-    },
+    ssl: false, // Disable SSL
 });
 
 client.connect()
