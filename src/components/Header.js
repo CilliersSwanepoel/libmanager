@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Header.css';
-
+import logo from './assets/logo.png'; 
 
 function Header() {
     return (
@@ -12,6 +12,7 @@ function Header() {
                 <li className="nav-item"><Link to="/circulation">Circulation Management</Link></li>
                 <li className="nav-item"><Link to="/notifications">Notifications</Link></li>
             </ul>
+            <img src={logo} alt="Logo" className="navbar-logo" />
         </nav>
     );
 }
