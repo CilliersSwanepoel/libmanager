@@ -213,6 +213,7 @@ function UserManagement() {
                 <table>
                     <thead>
                         <tr>
+                            <th>User ID</th>
                             <th>First Name</th>
                             <th>Last Name</th>
                             <th>Email</th>
@@ -225,6 +226,7 @@ function UserManagement() {
                     <tbody>
                         {filteredUsers.map((user) => (
                             <tr key={user.user_id}>
+                                <td>{user.user_id}</td>
                                 <td>{user.first_name}</td>
                                 <td>{user.last_name}</td>
                                 <td>{user.email}</td>

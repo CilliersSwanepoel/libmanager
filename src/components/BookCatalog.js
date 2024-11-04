@@ -164,6 +164,7 @@ function BookCatalog() {
                 <table>
                     <thead>
                         <tr>
+                            <th>Book ID</th>
                             <th>Title</th>
                             <th>Author</th>
                             <th>ISBN</th>
@@ -177,6 +178,7 @@ function BookCatalog() {
                     <tbody>
                         {filteredBooks.map((book) => (
                             <tr key={book.book_id}>
+                                <td>{book.book_id}</td>
                                 <td>{book.title}</td>
                                 <td>{book.author}</td>
                                 <td>{book.isbn}</td>
