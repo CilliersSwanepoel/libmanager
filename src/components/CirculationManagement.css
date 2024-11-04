@@ -1,0 +1,54 @@
+/* src/components/CirculationManagement.css */
+.circulation-management {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.circulation-management h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.circulation-management h2 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.circulation-management input {
+    display: block;
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.circulation-management button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.circulation-management button:hover {
+    background-color: #0056b3;
+}
+
+.circulation-management p {
+    margin-top: 20px;
+    color: green;
+    font-weight: bold;
+    text-align: center;
+}

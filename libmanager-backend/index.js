@@ -142,6 +142,56 @@ app.delete('/users/:id', (req, res) => {
     });
 });
 
+// Issue Book
+app.post('/issue-book', (req, res) => {
+  const { bookId, userId, dueDate } = req.body;
+  const sql = `INSERT INTO Circulation (book_id, user_id, due_date, status) VALUES ($1, $2, $3, 'Checked Out') RETURNING *`;
+  pool.query(sql, [bookId, userId, dueDate], (err, result) => {
+      if (err) {
+          console.error('Error issuing book:', err.message);
+          res.status(500).json({ error: 'Error issuing book' });
+          return;
+      }
+      res.json({ message: 'Book issued successfully', data: result.rows[0] });
+  });
+});
+
+// Return Book
+app.post('/return-book', (req, res) => {
+  const { bookId, userId } = req.body;
+  const sql = `UPDATE Circulation SET status = 'Returned', return_date = CURRENT_DATE WHERE book_id = $1 AND user_id = $2 AND status = 'Checked Out' RETURNING *`;
+  pool.query(sql, [bookId, userId], (err, result) => {
+      if (err) {
+          console.error('Error returning book:', err.message);
+          res.status(500).json({ error: 'Error returning book' });
+          return;
+      }
+      if (result.rowCount === 0) {
+          res.status(404).json({ error: 'No matching record found' });
+      } else {
+          res.json({ message: 'Book returned successfully', data: result.rows[0] });
+      }
+  });
+});
+
+// Renew Book
+app.post('/renew-book', (req, res) => {
+  const { bookId, userId } = req.body;
+  const sql = `UPDATE Circulation SET due_date = due_date + INTERVAL '7 days' WHERE book_id = $1 AND user_id = $2 AND status = 'Checked Out' RETURNING *`;
+  pool.query(sql, [bookId, userId], (err, result) => {
+      if (err) {
+          console.error('Error renewing book:', err.message);
+          res.status(500).json({ error: 'Error renewing book' });
+          return;
+      }
+      if (result.rowCount === 0) {
+          res.status(404).json({ error: 'No matching record found' });
+      } else {
+          res.json({ message: 'Book renewed successfully', data: result.rows[0] });
+      }
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
