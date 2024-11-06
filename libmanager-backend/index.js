@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const pool = require('./db'); // Import the correct database connection pool from db.js
+const { sendWelcomeEmail } = require('./mailer');
+require('dotenv').config();
 
 const app = express();
 const PORT = 5000;
@@ -97,7 +99,9 @@ app.post('/users', (req, res) => {
             res.status(500).json({ error: 'Error adding user' });
             return;
         }
-        res.json(result.rows[0]);
+        const newUser = result.rows[0];
+        sendWelcomeEmail(newUser.email, newUser.first_name);
+        res.json(newUser);
     });
 });
 
@@ -252,6 +256,24 @@ app.get('/fines', async (req, res) => {
     }
 });
 
+// Update a fine status
+app.put('/fines/:id', (req, res) => {
+    const { id } = req.params;
+    const { fine_status } = req.body;
+    const sql = 'UPDATE fines SET fine_status = $1 WHERE fine_id = $2 RETURNING *';
+    pool.query(sql, [fine_status, id], (err, result) => {
+        if (err) {
+            console.error('Error updating fine status:', err.message);
+            res.status(500).json({ error: 'Error updating fine status' });
+            return;
+        }
+        if (result.rowCount === 0) {
+            res.status(404).json({ error: 'Fine not found' });
+        } else {
+            res.json(result.rows[0]);
+        }
+    });
+});
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

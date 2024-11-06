@@ -42,17 +42,17 @@
 
 .circulation-management button {
     padding: 10px 15px;
-    background-color: #007bff;
+    background-color: #28a745;
     color: white;
     border: none;
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: 16px;
     font-size: 16px;
     transition: background-color 0.3s ease;
 }
 
 .circulation-management button:hover {
-    background-color: #0056b3;
+    background-color: #218838;
 }
 
 .circulation-management p {
@@ -78,7 +78,7 @@
 }
 
 .circulation-management th {
-    background-color: #f2f2f2;
+    background-color: #ff7300;
 }
 
 .circulation-management .search-bar {
