@@ -203,6 +203,56 @@ app.get('/circulation', (req, res) => {
     });
 });
 
+// Update fines for overdue books
+app.post('/update-fines', async (req, res) => {
+    const finePerDay = 10; // R10 fine per day
+    const today = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
+
+    const sql = `
+        WITH overdue_books AS (
+            SELECT 
+                c.transaction_id,
+                c.user_id,
+                c.book_id,
+                c.due_date,
+                GREATEST(0, DATE_PART('day', CURRENT_DATE - c.due_date)) AS overdue_days
+            FROM circulation c
+            WHERE c.status = 'Checked Out' AND c.due_date < CURRENT_DATE
+        )
+        INSERT INTO fines (user_id, transaction_id, fine_amount, fine_date, fine_status)
+        SELECT 
+            o.user_id,
+            o.transaction_id,
+            o.overdue_days * $1 AS fine_amount,
+            CURRENT_DATE AS fine_date,
+            'Unpaid' AS fine_status
+        FROM overdue_books o
+        ON CONFLICT (user_id, transaction_id) 
+        DO UPDATE SET fine_amount = fines.fine_amount + (EXCLUDED.fine_amount - fines.fine_amount),
+                      fine_date = CURRENT_DATE
+        RETURNING *;
+    `;
+
+    try {
+        const result = await pool.query(sql, [finePerDay]);
+        res.json({ message: "Fines updated successfully", data: result.rows });
+    } catch (error) {
+        console.error('Error updating fines:', error.message);
+        res.status(500).json({ error: 'Error updating fines' });
+    }
+});
+
+app.get('/fines', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM fines');
+        res.json(result.rows);
+    } catch (error) {
+        console.error('Error fetching fines:', error.message);
+        res.status(500).json({ error: 'Error fetching fines' });
+    }
+});
+
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
