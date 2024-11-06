@@ -4,6 +4,7 @@ import Header from './components/Header';
 import BookCatalog from './components/BookCatalog';
 import UserManagement from './components/UserManagement';
 import CirculationManagement from './components/CirculationManagement';
+import FineManagement from './components/FineManagement';
 import Notifications from './components/Notifications';
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
                     <Route path="/" element={<BookCatalog />} />
                     <Route path="/users" element={<UserManagement />} />
                     <Route path="/circulation" element={<CirculationManagement />} />
+                    <Route path="/fines" element={<FineManagement />} />
                     <Route path="/notifications" element={<Notifications />} />
                 </Routes>
             </div>

@@ -76,7 +76,6 @@ function CirculationManagement() {
     return (
         <div className="circulation-management">
             <div className="form-container">
-                <h1>Circulation Management</h1>
                 <div>
                     <h2>Issue Book</h2>
                     <input
