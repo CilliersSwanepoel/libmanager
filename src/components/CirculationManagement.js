@@ -15,6 +15,7 @@ function CirculationManagement() {
         const fetchCirculationRecords = async () => {
             try {
                 const response = await axios.get('http://localhost:5000/circulation');
+                console.log('Fetched circulation records:', response.data); // Log the fetched data
                 setCirculationRecords(response.data);
             } catch (error) {
                 console.error('Error fetching circulation records', error);
@@ -35,6 +36,7 @@ function CirculationManagement() {
 
             // Fetch the updated list of circulation records
             const updatedCirculationResponse = await axios.get('http://localhost:5000/circulation');
+            console.log('Updated circulation records:', updatedCirculationResponse.data); // Log the updated data
             setCirculationRecords(updatedCirculationResponse.data);
         } catch (error) {
             setMessage('Error issuing book');
@@ -49,6 +51,7 @@ function CirculationManagement() {
 
             // Fetch the updated list of circulation records
             const updatedCirculationResponse = await axios.get('http://localhost:5000/circulation');
+            console.log('Updated circulation records:', updatedCirculationResponse.data); // Log the updated data
             setCirculationRecords(updatedCirculationResponse.data);
         } catch (error) {
             setMessage('Error returning book');
@@ -63,6 +66,7 @@ function CirculationManagement() {
 
             // Fetch the updated list of circulation records
             const updatedCirculationResponse = await axios.get('http://localhost:5000/circulation');
+            console.log('Updated circulation records:', updatedCirculationResponse.data); // Log the updated data
             setCirculationRecords(updatedCirculationResponse.data);
         } catch (error) {
             setMessage('Error renewing book');

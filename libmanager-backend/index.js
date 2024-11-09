@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const pool = require('./db'); // Import the correct database connection pool from db.js
-const { sendWelcomeEmail } = require('./mailer');
+const { sendWelcomeEmail, sendFineNotificationEmail } = require('./mailer');
 require('dotenv').config();
 
 const app = express();
@@ -153,39 +153,71 @@ app.post('/issue-book', (req, res) => {
 });
 
 // Return Book
-app.post('/return-book', (req, res) => {
+app.post('/return-book', async (req, res) => {
     const { bookId, userId } = req.body;
-    const sql = `UPDATE circulation SET status = 'Returned', return_date = CURRENT_DATE WHERE book_id = $1 AND user_id = $2 AND status = 'Checked Out' RETURNING *`;
-    pool.query(sql, [bookId, userId], (err, result) => {
-        if (err) {
-            console.error('Error returning book:', err.message);
-            res.status(500).json({ error: 'Error returning book' });
-            return;
+    const finePerDay = 20; // R20 fine per day
+
+    try {
+        // Check if the book is overdue
+        const overdueCheckSql = `SELECT due_date FROM circulation WHERE book_id = $1 AND user_id = $2 AND status = 'Checked Out'`;
+        const overdueCheckResult = await pool.query(overdueCheckSql, [bookId, userId]);
+        if (overdueCheckResult.rowCount === 0) {
+            return res.status(404).json({ error: 'No matching record found' });
         }
-        if (result.rowCount === 0) {
-            res.status(404).json({ error: 'No matching record found' });
-        } else {
-            res.json(result.rows[0]);
+
+        const dueDate = new Date(overdueCheckResult.rows[0].due_date);
+        const currentDate = new Date();
+        const diffTime = currentDate - dueDate;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays > 0) {
+            const fineAmount = diffDays * finePerDay;
+            const fineSql = `INSERT INTO fines (user_id, transaction_id, fine_amount, fine_date, fine_status)
+                             VALUES ($1, (SELECT transaction_id FROM circulation WHERE book_id = $2 AND user_id = $3 AND status = 'Checked Out'), $4, CURRENT_DATE, 'Unpaid')`;
+            await pool.query(fineSql, [userId, bookId, userId, fineAmount]);
         }
-    });
+
+        const sql = `UPDATE circulation SET status = 'Returned', return_date = CURRENT_DATE WHERE book_id = $1 AND user_id = $2 AND status = 'Checked Out' RETURNING *`;
+        const result = await pool.query(sql, [bookId, userId]);
+        res.json(result.rows[0]);
+    } catch (error) {
+        console.error('Error returning book:', error.message);
+        res.status(500).json({ error: 'Error returning book' });
+    }
 });
 
 // Renew Book
-app.post('/renew-book', (req, res) => {
+app.post('/renew-book', async (req, res) => {
     const { bookId, userId } = req.body;
-    const sql = `UPDATE circulation SET due_date = due_date + INTERVAL '14 days' WHERE book_id = $1 AND user_id = $2 AND status = 'Checked Out' RETURNING *`;
-    pool.query(sql, [bookId, userId], (err, result) => {
-        if (err) {
-            console.error('Error renewing book:', err.message);
-            res.status(500).json({ error: 'Error renewing book' });
-            return;
+    const finePerDay = 20; // R20 fine per day
+
+    try {
+        // Check if the book is overdue
+        const overdueCheckSql = `SELECT due_date FROM circulation WHERE book_id = $1 AND user_id = $2 AND status = 'Checked Out'`;
+        const overdueCheckResult = await pool.query(overdueCheckSql, [bookId, userId]);
+        if (overdueCheckResult.rowCount === 0) {
+            return res.status(404).json({ error: 'No matching record found' });
         }
-        if (result.rowCount === 0) {
-            res.status(404).json({ error: 'No matching record found' });
-        } else {
-            res.json(result.rows[0]);
+
+        const dueDate = new Date(overdueCheckResult.rows[0].due_date);
+        const currentDate = new Date();
+        const diffTime = currentDate - dueDate;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays > 0) {
+            const fineAmount = diffDays * finePerDay;
+            const fineSql = `INSERT INTO fines (user_id, transaction_id, fine_amount, fine_date, fine_status)
+                             VALUES ($1, (SELECT transaction_id FROM circulation WHERE book_id = $2 AND user_id = $3 AND status = 'Checked Out'), $4, CURRENT_DATE, 'Unpaid')`;
+            await pool.query(fineSql, [userId, bookId, userId, fineAmount]);
         }
-    });
+
+        const sql = `UPDATE circulation SET due_date = due_date + INTERVAL '14 days' WHERE book_id = $1 AND user_id = $2 AND status = 'Checked Out' RETURNING *`;
+        const result = await pool.query(sql, [bookId, userId]);
+        res.json(result.rows[0]);
+    } catch (error) {
+        console.error('Error renewing book:', error.message);
+        res.status(500).json({ error: 'Error renewing book' });
+    }
 });
 
 // Fetch all circulation records
@@ -209,7 +241,7 @@ app.get('/circulation', (req, res) => {
 
 // Update fines for overdue books
 app.post('/update-fines', async (req, res) => {
-    const finePerDay = 10; // R10 fine per day
+    const finePerDay = 20; // R20 fine per day
     const today = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
 
     const sql = `
@@ -239,6 +271,12 @@ app.post('/update-fines', async (req, res) => {
 
     try {
         const result = await pool.query(sql, [finePerDay]);
+        // Send fine notification emails
+        for (const fine of result.rows) {
+            const userResult = await pool.query('SELECT email, first_name FROM Users WHERE user_id = $1', [fine.user_id]);
+            const user = userResult.rows[0];
+            sendFineNotificationEmail(user.email, user.first_name, fine.fine_amount);
+        }
         res.json({ message: "Fines updated successfully", data: result.rows });
     } catch (error) {
         console.error('Error updating fines:', error.message);
@@ -249,7 +287,18 @@ app.post('/update-fines', async (req, res) => {
 app.get('/fines', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM fines');
-        res.json(result.rows);
+        const fines = result.rows.map(fine => {
+            const returnDate = new Date(fine.return_date);
+            const currentDate = new Date();
+            const diffTime = currentDate - returnDate;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const fineAmount = diffDays > 0 ? diffDays * fine.daily_rate : 0;
+            return {
+                ...fine,
+                fine_amount: fineAmount
+            };
+        });
+        res.json(fines);
     } catch (error) {
         console.error('Error fetching fines:', error.message);
         res.status(500).json({ error: 'Error fetching fines' });

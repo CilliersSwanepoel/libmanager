@@ -26,4 +26,21 @@ const sendWelcomeEmail = (to, name) => {
     });
 };
 
-module.exports = { sendWelcomeEmail };
+const sendFineNotificationEmail = (to, name, fineAmount) => {
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to,
+        subject: 'LibManager Fine Notification',
+        text: `Hello ${name},\n\nYou have incurred a fine of R${fineAmount.toFixed(2)}. Please settle your fine at your earliest convenience.\n\nBest regards,\nLibManager Team`
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error('Error sending email:', error);
+        } else {
+            console.log('Email sent:', info.response);
+        }
+    });
+};
+
+module.exports = { sendWelcomeEmail, sendFineNotificationEmail };
