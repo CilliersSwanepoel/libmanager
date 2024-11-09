@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const pool = require('./db'); // Import the correct database connection pool from db.js
+const pool = require('./db'); 
 const { sendWelcomeEmail, sendFineNotificationEmail } = require('./mailer');
 require('dotenv').config();
 

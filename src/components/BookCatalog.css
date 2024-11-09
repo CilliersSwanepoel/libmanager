@@ -52,14 +52,14 @@
 .book-list table {
     width: 100%;
     border-collapse: collapse;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Added box-shadow */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
 }
 
 .book-list th, .book-list td {
     padding: 10px;
     border: 1px solid #000000;
     text-align: left;
-    transition: background-color 0.3s ease; /* Added transition */
+    transition: background-color 0.3s ease; 
 }
 
 .book-list th {
