@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './FineManagement.css'; // Import the CSS file
+import './FineManagement.css'; 
 
 function FineManagement() {
     const [fines, setFines] = useState([]);
@@ -11,7 +11,7 @@ function FineManagement() {
     useEffect(() => {
         const fetchFines = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/fines'); // Make sure this endpoint is set up on the backend
+                const response = await axios.get('http://localhost:5000/fines'); 
                 setFines(response.data);
             } catch (error) {
                 console.error('Error fetching fines:', error);

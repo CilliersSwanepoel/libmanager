@@ -241,7 +241,7 @@ app.get('/circulation', (req, res) => {
 
 // Update fines for overdue books
 app.post('/update-fines', async (req, res) => {
-    const finePerDay = 20; // R20 fine per day
+    const finePerDay = 20; 
     const today = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
 
     const sql = `
