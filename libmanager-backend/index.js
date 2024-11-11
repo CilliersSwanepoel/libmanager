@@ -106,50 +106,50 @@ app.post('/users', (req, res) => {
 });
 
 // Update a user
-app.put('/users/:id', (req, res) => {
+app.put('/users/:id', async (req, res) => {
     const { id } = req.params;
     const { first_name, last_name, email, phone_number, address, account_status } = req.body;
     const sql = `UPDATE Users SET first_name = $1, last_name = $2, email = $3, phone_number = $4, address = $5, account_status = $6 WHERE user_id = $7 RETURNING *`;
-    pool.query(sql, [first_name, last_name, email, phone_number, address, account_status, id], (err, result) => {
-        if (err) {
-            console.error('Error updating user:', err.message);
-            res.status(500).json({ error: 'Error updating user' });
-            return;
-        }
+
+    try {
+        const result = await pool.query(sql, [first_name, last_name, email, phone_number, address, account_status, id]);
         res.json(result.rows[0]);
-    });
+    } catch (err) {
+        console.error('Error updating user:', err.message);
+        res.status(500).json({ error: 'Error updating user' });
+    }
 });
 
 // Delete a user
-app.delete('/users/:id', (req, res) => {
+app.delete('/users/:id', async (req, res) => {
     const { id } = req.params;
     const sql = 'DELETE FROM Users WHERE user_id = $1 RETURNING *';
-    pool.query(sql, [id], (err, result) => {
-        if (err) {
-            console.error('Error deleting user:', err.message);
-            res.status(500).json({ error: 'Error deleting user' });
-            return;
-        }
+
+    try {
+        const result = await pool.query(sql, [id]);
         if (result.rowCount === 0) {
             res.status(404).json({ error: 'User not found' });
         } else {
             res.json(result.rows[0]);
         }
-    });
+    } catch (err) {
+        console.error('Error deleting user:', err.message);
+        res.status(500).json({ error: 'Error deleting user' });
+    }
 });
 
 // Issue Book
-app.post('/issue-book', (req, res) => {
+app.post('/issue-book', async (req, res) => {
     const { bookId, userId, dueDate } = req.body;
     const sql = `INSERT INTO circulation (book_id, user_id, issue_date, due_date, status) VALUES ($1, $2, CURRENT_DATE, $3, 'Checked Out') RETURNING *`;
-    pool.query(sql, [bookId, userId, dueDate], (err, result) => {
-        if (err) {
-            console.error('Error issuing book:', err.message);
-            res.status(500).json({ error: 'Error issuing book' });
-            return;
-        }
-        res.json({ message: 'Book issued successfully', data: result.rows[0] });
-    });
+
+    try {
+        const result = await pool.query(sql, [bookId, userId, dueDate]);
+        res.json(result.rows[0]);
+    } catch (err) {
+        console.error('Error issuing book:', err.message);
+        res.status(500).json({ error: 'Error issuing book' });
+    }
 });
 
 // Return Book
@@ -242,7 +242,7 @@ app.get('/circulation', (req, res) => {
 // Update fines for overdue books
 app.post('/update-fines', async (req, res) => {
     const finePerDay = 20; 
-    const today = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
+    const today = new Date().toISOString().split('T')[0]; 
 
     const sql = `
         WITH overdue_books AS (
@@ -264,8 +264,8 @@ app.post('/update-fines', async (req, res) => {
             'Unpaid' AS fine_status
         FROM overdue_books o
         ON CONFLICT (user_id, transaction_id) 
-        DO UPDATE SET fine_amount = fines.fine_amount + (EXCLUDED.fine_amount - fines.fine_amount),
-                      fine_date = CURRENT_DATE
+        DO UPDATE SET fine_amount = EXCLUDED.fine_amount,
+                      fine_date = EXCLUDED.fine_date
         RETURNING *;
     `;
 
@@ -287,18 +287,7 @@ app.post('/update-fines', async (req, res) => {
 app.get('/fines', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM fines');
-        const fines = result.rows.map(fine => {
-            const returnDate = new Date(fine.return_date);
-            const currentDate = new Date();
-            const diffTime = currentDate - returnDate;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            const fineAmount = diffDays > 0 ? diffDays * fine.daily_rate : 0;
-            return {
-                ...fine,
-                fine_amount: fineAmount
-            };
-        });
-        res.json(fines);
+        res.json(result.rows);
     } catch (error) {
         console.error('Error fetching fines:', error.message);
         res.status(500).json({ error: 'Error fetching fines' });

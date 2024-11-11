@@ -63,7 +63,7 @@ function FineManagement() {
                         <tr key={fine.fine_id}>
                             <td>{fine.user_id}</td>
                             <td>{fine.transaction_id}</td>
-                            <td>{`R${fine.fine_amount.toFixed(2)}`}</td>
+                            <td>{`R${Number(fine.fine_amount).toFixed(2)}`}</td>
                             <td>{formatDate(fine.fine_date)}</td>
                             <td>{fine.fine_status}</td>
                             <td>
@@ -96,7 +96,7 @@ function FineManagement() {
                         <tr key={fine.fine_id}>
                             <td>{fine.user_id}</td>
                             <td>{fine.transaction_id}</td>
-                            <td>{`R${fine.fine_amount.toFixed(2)}`}</td>
+                            <td>{`R${Number(fine.fine_amount).toFixed(2)}`}</td>
                             <td>{formatDate(fine.fine_date)}</td>
                             <td>{fine.fine_status}</td>
                         </tr>
