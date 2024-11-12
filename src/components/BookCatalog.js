@@ -141,13 +141,14 @@ function BookCatalog() {
                 <input type="text" name="author" placeholder="Author" value={editingBook ? editingBook.author : newBook.author} onChange={handleInputChange} />
                 <input type="text" name="isbn" placeholder="ISBN" value={editingBook ? editingBook.isbn : newBook.isbn} onChange={handleInputChange} />
                 <input type="text" name="genre" placeholder="Genre" value={editingBook ? editingBook.genre : newBook.genre} onChange={handleInputChange} />
-                <select name="publication_year" value={editingBook ? editingBook.publication_year : newBook.publication_year} onChange={handleInputChange}>
+                
+                <input type="text" name="shelf_location" placeholder="Shelf Location" value={editingBook ? editingBook.shelf_location : newBook.shelf_location} onChange={handleInputChange} />
+                <select className = "pub-year" name="publication_year" value={editingBook ? editingBook.publication_year : newBook.publication_year} onChange={handleInputChange}>
                     <option value="">Year</option>
                     {generateYearOptions().map((year) => (
                         <option key={year} value={year}>{year}</option>
                     ))}
                 </select>
-                <input type="text" name="shelf_location" placeholder="Shelf Location" value={editingBook ? editingBook.shelf_location : newBook.shelf_location} onChange={handleInputChange} />
                 {editingBook ? (
                     <>
                         <button onClick={handleUpdateBook}>Update Book</button>
