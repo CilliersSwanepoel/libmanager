@@ -188,7 +188,7 @@ function UserManagement() {
                     onChange={handleInputChange}
                 />
                 {validationErrors.address && <div className="error">{validationErrors.address}</div>}
-                <select
+                <select className = "acc-status"
                     name="account_status"
                     value={editingUser ? editingUser.account_status : newUser.account_status}
                     onChange={handleInputChange}

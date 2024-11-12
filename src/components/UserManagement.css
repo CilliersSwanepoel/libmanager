@@ -29,6 +29,16 @@
     display: block;
 }
 
+.acc-status {
+    padding: 10px 15px;
+    background-color: #ff7300;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 16px;
+}
+
 .add-user-form button {
     padding: 10px 15px;
     background-color: #28a745;
