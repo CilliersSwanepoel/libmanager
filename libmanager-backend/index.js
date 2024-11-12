@@ -2,36 +2,37 @@ const express = require('express');
 const cors = require('cors');
 const pool = require('./db'); 
 const { sendWelcomeEmail, sendFineNotificationEmail } = require('./mailer');
-require('dotenv').config();
+require('dotenv').config(); // Load environment variables
 
-const app = express();
-const PORT = 5000;
+const app = express();// Initialize Express app
+const PORT = 5000;// Define the port number
 
-app.use(cors());
-app.use(express.json());
+app.use(cors());// Enable CORS
+app.use(express.json());// Enable JSON parsing for incoming requests
 
+// Root endpoint
 app.get('/', (req, res) => {
     res.sendStatus(204); // No Content
 });
 
 // Fetch all books
 app.get('/books', (req, res) => {
-    const sql = 'SELECT * FROM Books';
+    const sql = 'SELECT * FROM Books';// SQL query to fetch all books
     pool.query(sql, (err, results) => {
         if (err) {
             console.error('Error fetching books:', err.message);
             res.status(500).json({ error: 'Error fetching books' });
             return;
         }
-        res.json(results.rows);
+        res.json(results.rows);// Send fetched books as JSON response
     });
 });
 
 // Add a new book
 app.post('/books', (req, res) => {
-    const { title, author, isbn, genre, publication_year, availability_status, shelf_location } = req.body;
+    const { title, author, isbn, genre, publication_year, availability_status, shelf_location } = req.body;// Destructure book details from request body
     const sql = `INSERT INTO Books (title, author, isbn, genre, publication_year, availability_status, shelf_location)
-                 VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`;
+                 VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`;// SQL query to insert a new book
     pool.query(sql, [title, author, isbn, genre, publication_year, availability_status, shelf_location], (err, result) => {
         if (err) {
             console.error('Error adding book:', err.message);
@@ -46,7 +47,7 @@ app.post('/books', (req, res) => {
 app.put('/books/:id', (req, res) => {
     const { id } = req.params;
     const { title, author, isbn, genre, publication_year, availability_status, shelf_location } = req.body;
-    const sql = `UPDATE Books SET title = $1, author = $2, isbn = $3, genre = $4, publication_year = $5, availability_status = $6, shelf_location = $7 WHERE book_id = $8 RETURNING *`;
+    const sql = `UPDATE Books SET title = $1, author = $2, isbn = $3, genre = $4, publication_year = $5, availability_status = $6, shelf_location = $7 WHERE book_id = $8 RETURNING *`;// SQL query to update a book's details
     pool.query(sql, [title, author, isbn, genre, publication_year, availability_status, shelf_location, id], (err, result) => {
         if (err) {
             console.error('Error updating book:', err.message);
@@ -59,18 +60,18 @@ app.put('/books/:id', (req, res) => {
 
 // Delete a book
 app.delete('/books/:id', (req, res) => {
-    const { id } = req.params;
-    const sql = 'DELETE FROM Books WHERE book_id = $1 RETURNING *';
+    const { id } = req.params;// Extract book ID from request parameters
+    const sql = 'DELETE FROM Books WHERE book_id = $1 RETURNING *';// SQL query to delete a book by ID
     pool.query(sql, [id], (err, result) => {
         if (err) {
-            console.error('Error deleting book:', err.message);
-            res.status(500).json({ error: 'Error deleting book' });
+            console.error('Error deleting book:', err.message);// Log error message
+            res.status(500).json({ error: 'Error deleting book' });// Send error response
             return;
         }
         if (result.rowCount === 0) {
             res.status(404).json({ error: 'Book not found' });
         } else {
-            res.json(result.rows[0]);
+            res.json(result.rows[0]);// Send deleted book details as JSON response
         }
     });
 });
